@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuerdas Tensas</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Fraunces:ital,wght@0,300;0,700;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0a0a12; --surface:#111120; --surface2:#181830; --surface3:#1e1e3a;
+    --accent1:#7fff6e; --accent2:#6eb8ff; --accent3:#ff6eb8; --accent4:#ffe06e; --accent5:#c084fc;
+    --text:#e8e8f0; --text-dim:#7a7a9a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+  /* PORTADA */
+  .cover{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:2rem;}
+  .cover-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(127,255,110,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(127,255,110,0.04) 1px,transparent 1px);background-size:50px 50px;animation:gridMove 20s linear infinite;}
+  @keyframes gridMove{from{transform:translateY(0)}to{transform:translateY(50px)}}
+  .cover-wave-bg{position:absolute;bottom:0;left:0;right:0;height:220px;overflow:hidden;}
+  .cover-content{position:relative;z-index:2;text-align:center;max-width:820px;}
+  .cover-tag{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.22em;color:var(--accent1);text-transform:uppercase;margin-bottom:2rem;opacity:0;animation:fadeUp .8s .2s ease forwards;}
+  .cover-title{font-family:'Fraunces',serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:700;line-height:1.05;margin-bottom:1rem;opacity:0;animation:fadeUp .8s .4s ease forwards;}
+  .cover-title span{background:linear-gradient(135deg,var(--accent1),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .cover-sub{font-family:'Fraunces',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-style:italic;font-weight:300;color:var(--text-dim);margin-bottom:3.5rem;opacity:0;animation:fadeUp .8s .6s ease forwards;}
+  .cover-folder{background:var(--surface2);border:1px solid rgba(127,255,110,.2);border-radius:18px;padding:2rem 2.5rem;display:inline-block;opacity:0;animation:fadeUp .8s .8s ease forwards;box-shadow:0 0 60px rgba(127,255,110,.08),0 20px 60px rgba(0,0,0,.5);position:relative;overflow:hidden;}
+  .cover-folder::before{content:'';position:absolute;top:-1px;left:20px;width:80px;height:12px;background:rgba(127,255,110,.3);border-radius:8px 8px 0 0;}
+  .folder-label{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.18em;color:var(--accent1);text-transform:uppercase;margin-bottom:1.2rem;}
+  .folder-members{list-style:none;}
+  .folder-members li{font-size:1.05rem;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:.8rem;}
+  .folder-members li:last-child{border-bottom:none;}
+  .member-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .d1{background:var(--accent1);box-shadow:0 0 8px var(--accent1);}
+  .d2{background:var(--accent2);box-shadow:0 0 8px var(--accent2);}
+  .d3{background:var(--accent3);box-shadow:0 0 8px var(--accent3);}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+  /* SECCIONES */
+  .section{padding:5rem 2rem;max-width:1060px;margin:0 auto;}
+  .section-header{display:flex;align-items:flex-start;gap:1.5rem;margin-bottom:3rem;}
+  .section-num{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--accent1);letter-spacing:.15em;margin-top:.7rem;white-space:nowrap;}
+  .section-title{font-family:'Fraunces',serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:700;line-height:1.1;}
+  .section-title .hl{color:var(--accent2);}
+  .section-title .hl2{color:var(--accent4);}
+  .section-title .hl3{color:var(--accent3);}
+  .divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(127,255,110,.3),transparent);}
+
+  /* TARJETAS */
+  .concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;margin-bottom:2.5rem;}
+  .concept-card{background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:1.8rem;transition:transform .3s,border-color .3s,box-shadow .3s;cursor:default;}
+  .concept-card:hover{transform:translateY(-4px);border-color:rgba(127,255,110,.3);box-shadow:0 8px 40px rgba(127,255,110,.1);}
+  .card-icon{font-size:2rem;margin-bottom:1rem;}
+  .card-title{font-family:'Space Mono',monospace;font-size:.78rem;color:var(--accent1);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;}
+  .card-body{font-size:.92rem;color:var(--text-dim);line-height:1.65;}
+  .card-body strong{color:var(--text);}
+
+  /* TEORÍA */
+  .theory-block{background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:2rem 2.2rem;margin-bottom:2rem;}
+  .theory-block p{font-size:.96rem;color:var(--text-dim);line-height:1.75;margin-bottom:1rem;}
+  .theory-block p:last-child{margin-bottom:0;}
+  .theory-block strong{color:var(--text);}
+  .theory-block .math{font-family:'Space Mono',monospace;font-size:.93rem;color:var(--accent4);}
+
+  /* ECUACIONES */
+  .eq-hl{background:linear-gradient(135deg,rgba(127,255,110,.12),rgba(110,184,255,.08));border:1px solid rgba(127,255,110,.25);border-radius:12px;padding:.9rem 1.4rem;margin:.8rem 0;display:block;font-family:'Space Mono',monospace;font-size:1rem;color:var(--accent1);}
+  .eq-hl.blue{background:linear-gradient(135deg,rgba(110,184,255,.12),rgba(127,255,110,.06));border-color:rgba(110,184,255,.25);color:var(--accent2);}
+  .eq-hl.yellow{background:linear-gradient(135deg,rgba(255,224,110,.12),rgba(255,110,184,.06));border-color:rgba(255,224,110,.25);color:var(--accent4);}
+  .eq-hl.pink{background:linear-gradient(135deg,rgba(255,110,184,.12),rgba(192,132,252,.06));border-color:rgba(255,110,184,.25);color:var(--accent3);}
+  .eq-hl.purple{background:linear-gradient(135deg,rgba(192,132,252,.12),rgba(110,184,255,.06));border-color:rgba(192,132,252,.25);color:var(--accent5);}
+
+  /* DERIVACIÓN */
+  .deriv-box{background:var(--surface2);border-left:3px solid var(--accent2);border-radius:0 14px 14px 0;padding:1.5rem 1.8rem;margin:1.5rem 0;}
+  .deriv-step{display:flex;align-items:flex-start;gap:1rem;margin-bottom:.9rem;}
+  .deriv-step:last-child{margin-bottom:0;}
+  .step-tag{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent2);background:rgba(110,184,255,.12);border:1px solid rgba(110,184,255,.2);border-radius:4px;padding:.2rem .5rem;flex-shrink:0;margin-top:.15rem;}
+  .step-body{font-size:.92rem;color:var(--text-dim);line-height:1.65;}
+  .step-body .m{font-family:'Space Mono',monospace;color:var(--accent4);}
+
+  /* CHIPS */
+  .info-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.2rem;margin-bottom:2.5rem;}
+  .info-chip{background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:1.4rem 1.6rem;display:flex;align-items:flex-start;gap:1rem;}
+  .chip-icon{font-size:1.5rem;flex-shrink:0;margin-top:.1rem;}
+  .chip-text{font-size:.87rem;color:var(--text-dim);line-height:1.6;}
+  .chip-text strong{color:var(--text);display:block;margin-bottom:.2rem;}
+
+  /* SIM BOX */
+  .sim-box{background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:20px;overflow:hidden;margin-bottom:3rem;}
+  .sim-header{background:var(--surface2);padding:1.2rem 2rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.06);}
+  .sim-title{font-family:'Space Mono',monospace;font-size:.78rem;color:var(--accent2);letter-spacing:.12em;}
+  .sim-dots{display:flex;gap:6px;}
+  .sd{width:10px;height:10px;border-radius:50%;}
+  .sd1{background:#ff5f57}.sd2{background:#febc2e}.sd3{background:#28c840}
+  .sim-body{padding:2rem;display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
+  canvas{border-radius:10px;display:block;}
+  .controls{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center;justify-content:center;width:100%;}
+  .ctrl-g{display:flex;flex-direction:column;align-items:center;gap:.4rem;min-width:130px;}
+  .ctrl-lbl{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;text-align:center;}
+  .ctrl-val{font-family:'Space Mono',monospace;font-size:.9rem;color:var(--accent1);}
+  input[type=range]{-webkit-appearance:none;width:130px;height:4px;border-radius:4px;background:rgba(255,255,255,.1);outline:none;cursor:pointer;}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--accent1);box-shadow:0 0 8px var(--accent1);cursor:pointer;transition:transform .2s;}
+  input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
+  .btn{font-family:'Space Mono',monospace;font-size:.75rem;letter-spacing:.1em;padding:.6rem 1.4rem;border-radius:8px;border:1px solid;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+  .btn-p{background:var(--accent1);border-color:var(--accent1);color:#0a0a12;}
+  .btn-p:hover{box-shadow:0 0 20px var(--accent1);transform:translateY(-1px);}
+  .btn-s{background:transparent;border-color:rgba(255,255,255,.2);color:var(--text);}
+  .btn-s:hover{border-color:var(--accent2);color:var(--accent2);}
+
+  /* MODOS */
+  .modes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;margin-bottom:3rem;}
+  .mode-card{background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:16px;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;}
+  .mode-card:hover{transform:translateY(-4px);}
+  .mode-card:nth-child(1):hover{border-color:rgba(127,255,110,.4);box-shadow:0 8px 40px rgba(127,255,110,.12);}
+  .mode-card:nth-child(2):hover{border-color:rgba(110,184,255,.4);box-shadow:0 8px 40px rgba(110,184,255,.12);}
+  .mode-card:nth-child(3):hover{border-color:rgba(255,110,184,.4);box-shadow:0 8px 40px rgba(255,110,184,.12);}
+  .mode-card:nth-child(4):hover{border-color:rgba(255,224,110,.4);box-shadow:0 8px 40px rgba(255,224,110,.12);}
+  .mode-cw{padding:1.2rem 1.5rem .5rem;}
+  .mode-info{padding:.8rem 1.5rem 1.5rem;}
+  .mode-lbl{font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.3rem;}
+  .mode-name{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:700;margin-bottom:.4rem;}
+  .mode-f{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--text-dim);}
+
+  /* DOS COLUMNAS */
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:2rem;}
+  @media(max-width:700px){.two-col{grid-template-columns:1fr;}}
+
+  /* EJEMPLO */
+  .example-box{background:linear-gradient(135deg,var(--surface2),var(--surface3));border:1px solid rgba(127,255,110,.18);border-radius:20px;padding:2.5rem;margin-bottom:2rem;position:relative;overflow:hidden;}
+  .example-box::before{content:'EJEMPLO';position:absolute;top:1.5rem;right:1.5rem;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.2em;color:rgba(127,255,110,.2);}
+  .ex-title{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--accent1);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1.2rem;}
+  .ex-body{font-size:.95rem;color:var(--text-dim);line-height:1.75;}
+  .ex-body strong{color:var(--text);}
+  .ex-sol{margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid rgba(255,255,255,.07);}
+  .sol-row{display:flex;gap:1rem;margin-bottom:1rem;align-items:flex-start;}
+  .sol-tag{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent4);background:rgba(255,224,110,.1);border:1px solid rgba(255,224,110,.2);border-radius:4px;padding:.2rem .5rem;flex-shrink:0;margin-top:.2rem;white-space:nowrap;}
+  .sol-txt{font-size:.93rem;color:var(--text-dim);line-height:1.6;}
+  .sol-txt .m{font-family:'Space Mono',monospace;color:var(--accent4);}
+
+  /* CALCULADORA */
+  .calc-wrap{background:var(--surface2);border:1px solid rgba(192,132,252,.2);border-radius:16px;padding:2rem;margin-bottom:2rem;}
+  .calc-title{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--accent5);letter-spacing:.14em;text-transform:uppercase;margin-bottom:1.5rem;}
+  .calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem;}
+  .calc-field{display:flex;flex-direction:column;gap:.4rem;}
+  .calc-lbl{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.1em;}
+  .calc-inp{background:var(--surface);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:.6rem .9rem;color:var(--text);font-family:'Space Mono',monospace;font-size:.9rem;outline:none;transition:border-color .2s;width:100%;}
+  .calc-inp:focus{border-color:var(--accent5);}
+  .calc-res{background:var(--surface);border:1px solid rgba(192,132,252,.15);border-radius:12px;padding:1.4rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;}
+  .res-item{text-align:center;}
+  .res-lbl{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;}
+  .res-val{font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent5);}
+
+  /* QUIZ */
+  .quiz-wrap{background:var(--surface);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:2.5rem;margin-bottom:3rem;}
+  .quiz-q{font-family:'Fraunces',serif;font-size:1.15rem;margin-bottom:1.5rem;line-height:1.4;}
+  .quiz-opts{display:flex;flex-direction:column;gap:.8rem;margin-bottom:1.5rem;}
+  .quiz-opt{background:var(--surface2);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.9rem 1.2rem;cursor:pointer;font-size:.95rem;transition:all .2s;display:flex;align-items:center;gap:.8rem;text-align:left;color:var(--text);font-family:'DM Sans',sans-serif;}
+  .quiz-opt:hover{border-color:rgba(110,184,255,.4);background:rgba(110,184,255,.06);}
+  .quiz-opt.correct{border-color:var(--accent1);background:rgba(127,255,110,.1);color:var(--accent1);}
+  .quiz-opt.wrong{border-color:var(--accent3);background:rgba(255,110,184,.1);color:var(--accent3);}
+  .opt-l{font-family:'Space Mono',monospace;font-size:.7rem;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .quiz-fb{font-size:.9rem;border-radius:10px;padding:.9rem 1.2rem;margin-top:.5rem;display:none;}
+  .quiz-fb.show{display:block;}
+  .quiz-fb.ok{background:rgba(127,255,110,.1);color:var(--accent1);border:1px solid rgba(127,255,110,.2);}
+  .quiz-fb.fail{background:rgba(255,110,184,.1);color:var(--accent3);border:1px solid rgba(255,110,184,.2);}
+
+  /* GLOSARIO */
+  .glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;margin-bottom:3rem;}
+  .gloss-item{background:var(--surface);border-left:3px solid var(--accent4);padding:1rem 1.2rem;border-radius:0 10px 10px 0;}
+  .gloss-term{font-family:'Space Mono',monospace;font-size:.78rem;color:var(--accent4);margin-bottom:.3rem;}
+  .gloss-def{font-size:.87rem;color:var(--text-dim);line-height:1.55;}
+
+  /* SPEED */
+  .speed-vis{display:flex;align-items:center;gap:.6rem;font-family:'Space Mono',monospace;font-size:.72rem;color:var(--text-dim);}
+  .speed-bar{width:80px;height:4px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;}
+  .speed-fill{height:100%;background:linear-gradient(90deg,var(--accent1),var(--accent2));border-radius:4px;transition:width .3s;}
+
+  /* ═══ TABLA DE FÓRMULAS ═══ */
+  .ftable-section{background:var(--surface);border:1px solid rgba(127,255,110,.15);border-radius:24px;overflow:hidden;margin-bottom:3rem;}
+  .ftable-hdr{background:linear-gradient(135deg,rgba(127,255,110,.1),rgba(110,184,255,.06));padding:2rem 2.5rem;border-bottom:1px solid rgba(127,255,110,.1);}
+  .ftable-hdr-title{font-family:'Fraunces',serif;font-size:2rem;font-weight:700;}
+  .ftable-hdr-title span{color:var(--accent1);}
+  .ftable-hdr-sub{font-family:'Space Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.15em;text-transform:uppercase;margin-top:.5rem;}
+  .ftable-wrap{overflow-x:auto;}
+  table.ft{width:100%;border-collapse:collapse;}
+  table.ft thead tr{background:rgba(255,255,255,.03);}
+  table.ft thead th{padding:1rem 1.5rem;font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim);text-align:left;border-bottom:1px solid rgba(255,255,255,.08);}
+  table.ft tbody tr{border-bottom:1px solid rgba(255,255,255,.05);transition:background .2s;}
+  table.ft tbody tr:last-child{border-bottom:none;}
+  table.ft tbody tr:hover{background:rgba(127,255,110,.03);}
+  table.ft td{padding:1rem 1.5rem;vertical-align:middle;}
+  .ft-name{font-size:.95rem;color:var(--text);font-weight:500;}
+  .ft-name small{display:block;font-size:.78rem;color:var(--text-dim);font-weight:400;margin-top:.15rem;}
+  .ft-eq{font-family:'Space Mono',monospace;font-size:1rem;}
+  .ft-vars{font-size:.8rem;color:var(--text-dim);line-height:1.6;}
+  .ft-vars span{color:var(--text);}
+  .badge{display:inline-block;padding:.2rem .6rem;border-radius:20px;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;}
+  .bw{background:rgba(127,255,110,.1);color:var(--accent1);border:1px solid rgba(127,255,110,.2);}
+  .bf{background:rgba(110,184,255,.1);color:var(--accent2);border:1px solid rgba(110,184,255,.2);}
+  .bv{background:rgba(255,224,110,.1);color:var(--accent4);border:1px solid rgba(255,224,110,.2);}
+  .ba{background:rgba(255,110,184,.1);color:var(--accent3);border:1px solid rgba(255,110,184,.2);}
+  .bp{background:rgba(192,132,252,.1);color:var(--accent5);border:1px solid rgba(192,132,252,.2);}
+  .ft-highlight{background:rgba(192,132,252,.04);}
+
+  /* REVEAL */
+  .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+
+  footer{text-align:center;padding:4rem 2rem;border-top:1px solid rgba(255,255,255,.06);color:var(--text-dim);font-size:.85rem;}
+  footer strong{color:var(--accent1);font-family:'Space Mono',monospace;}
+</style>
+</head>
+<body>
+
+<!-- ═══ PORTADA ═══ -->
+<section class="cover">
+  <div class="cover-grid"></div>
+  <div class="cover-wave-bg"><canvas id="coverWave" width="1400" height="220" style="width:100%;height:100%"></canvas></div>
+  <div class="cover-content">
+    <p class="cover-tag">Física Ondulatoria · Laboratorio Virtual</p>
+    <h1 class="cover-title">Cuerdas<br><span>Tensas</span></h1>
+    <p class="cover-sub">Ondas Viajeras, Estacionarias y Armónicos · Simulaciones y Teoría</p>
+    <div class="cover-folder">
+      <p class="folder-label">📁 Integrantes del grupo</p>
+      <ul class="folder-members">
+        <li><span class="member-dot d1"></span>Mariana Alzate</li>
+        <li><span class="member-dot d2"></span>Manuela Foronda</li>
+        <li><span class="member-dot d3"></span>Camila Marín</li>
+        <li><span class="member-dot" style="background:var(--accent4);box-shadow:0 0 8px var(--accent4);"></span>Eddier Bohórquez</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<div class="divider"></div>
+
+<!-- ═══ 01 · ECUACIÓN GENERAL DE ONDA ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">01</span>
+    <h2 class="section-title">Ecuación General <span class="hl">de Onda</span></h2>
+  </div>
+
+  <div class="theory-block">
+    <p>Una onda es una perturbación que se propaga por el espacio transportando energía sin transportar materia. La descripción matemática más completa de una onda en una dimensión es la <strong>ecuación general de onda</strong>:</p>
+    <div class="eq-hl" style="font-size:1.05rem;">y(x, t) = A · sen(kx − ωt + φ)</div>
+    <p>También puede expresarse en forma coseno, o combinando ambas con diferentes convenciones de signo según la dirección de propagación:</p>
+    <div class="eq-hl blue">y(x, t) = A · cos(kx − ωt + φ)</div>
+    <p>donde cada parámetro tiene un significado físico preciso que describe completamente el comportamiento de la onda.</p>
+  </div>
+
+  <div class="concept-grid">
+    <div class="concept-card"><div class="card-icon">📏</div><div class="card-title">Amplitud (A)</div><div class="card-body">Desplazamiento máximo desde la posición de equilibrio. Se mide en metros [m]. Determina la <strong>energía</strong> transportada por la onda: E ∝ A².</div></div>
+    <div class="concept-card"><div class="card-icon">〰️</div><div class="card-title">Número de onda (k)</div><div class="card-body">Cantidad de ciclos completos por unidad de longitud. <strong>k = 2π/λ</strong> [rad/m]. Relaciona la variación espacial de la onda.</div></div>
+    <div class="concept-card"><div class="card-icon">🔁</div><div class="card-title">Frec. angular (ω)</div><div class="card-body">Rapidez de variación temporal: <strong>ω = 2πf = 2π/T</strong> [rad/s]. Determina cuántos ciclos completos ocurren por segundo.</div></div>
+    <div class="concept-card"><div class="card-icon">📐</div><div class="card-title">Fase inicial (φ)</div><div class="card-body">Ángulo de fase en t = 0 y x = 0. Depende de las <strong>condiciones iniciales</strong> del problema. Se mide en radianes [rad].</div></div>
+  </div>
+
+  <div class="theory-block">
+    <p><strong>Relaciones fundamentales entre parámetros:</strong></p>
+    <div class="deriv-box" style="margin-top:.8rem;">
+      <div class="deriv-step">
+        <span class="step-tag">PERÍODO</span>
+        <div class="step-body">Tiempo en completar un ciclo: <span class="m">T = 1/f = 2π/ω</span> [s]</div>
+      </div>
+      <div class="deriv-step">
+        <span class="step-tag">LONG. ONDA</span>
+        <div class="step-body">Distancia de un ciclo completo: <span class="m">λ = 2π/k = v·T = v/f</span> [m]</div>
+      </div>
+      <div class="deriv-step">
+        <span class="step-tag">VELOCIDAD</span>
+        <div class="step-body">Rapidez de propagación de la fase: <span class="m">v = λ·f = ω/k</span> [m/s]</div>
+      </div>
+      <div class="deriv-step">
+        <span class="step-tag">EC. DIFERENCIAL</span>
+        <div class="step-body">La ecuación de onda cumple: <span class="m">∂²y/∂t² = v² · ∂²y/∂x²</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-chip"><span class="chip-icon">➡️</span><div class="chip-text"><strong>Propagación en +x</strong>El argumento es (kx − ωt): la onda avanza hacia la derecha (x positivo) con el tiempo.</div></div>
+    <div class="info-chip"><span class="chip-icon">⬅️</span><div class="chip-text"><strong>Propagación en −x</strong>El argumento es (kx + ωt): la onda avanza hacia la izquierda (x negativo) con el tiempo.</div></div>
+    <div class="info-chip"><span class="chip-icon">⚡</span><div class="chip-text"><strong>Transversal vs Longitudinal</strong>En cuerdas tensas la onda es <strong>transversal</strong>: el desplazamiento y es perpendicular a la dirección de propagación x.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 02 · ONDAS VIAJERAS / PROGRESIVAS ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">02</span>
+    <h2 class="section-title">Ondas Viajeras <span class="hl2">/ Progresivas</span></h2>
+  </div>
+
+  <div class="theory-block">
+    <p>Una <strong>onda viajera</strong> (también llamada onda progresiva) es aquella que transporta energía de un punto a otro a través del medio. A diferencia de la onda estacionaria, el patrón de oscilación se desplaza en el espacio con el tiempo. Sus dos formas fundamentales son:</p>
+    <div class="eq-hl">y₁(x,t) = A · sen(kx − ωt) &nbsp;&nbsp;&nbsp; <span style="color:var(--accent2);">[→ hacia +x]</span></div>
+    <div class="eq-hl blue">y₂(x,t) = A · sen(kx + ωt) &nbsp;&nbsp;&nbsp; <span style="color:var(--accent1);">[← hacia −x]</span></div>
+    <p style="margin-top:.8rem;">Estas dos ondas, al superponerse en una cuerda con extremos fijos, dan origen a las <strong>ondas estacionarias</strong> que se estudian en las siguientes secciones.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="theory-block" style="margin-bottom:0;">
+      <p><strong>Características de la onda viajera:</strong></p>
+      <div style="display:flex;flex-direction:column;gap:.8rem;margin-top:.8rem;">
+        <div style="background:var(--surface2);border-radius:10px;padding:.9rem 1.1rem;">
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent1);margin-bottom:.3rem;">TRANSPORTE DE ENERGÍA</div>
+          <div style="font-size:.87rem;color:var(--text-dim);">Transporta energía continuamente en la dirección de propagación. Potencia media: <span style="font-family:'Space Mono',monospace;color:var(--accent4);">P = ½·μ·ω²·A²·v</span></div>
+        </div>
+        <div style="background:var(--surface2);border-radius:10px;padding:.9rem 1.1rem;">
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent2);margin-bottom:.3rem;">AMPLITUD UNIFORME</div>
+          <div style="font-size:.87rem;color:var(--text-dim);">Todos los puntos del medio oscilan con la <strong>misma amplitud A</strong>. No existen nodos ni antinodos.</div>
+        </div>
+        <div style="background:var(--surface2);border-radius:10px;padding:.9rem 1.1rem;">
+          <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent3);margin-bottom:.3rem;">VELOCIDAD DE FASE</div>
+          <div style="font-size:.87rem;color:var(--text-dim);">La velocidad a la que se mueve la cresta: <span style="font-family:'Space Mono',monospace;color:var(--accent4);">v = ω/k = λ·f = √(F/μ)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="theory-block" style="margin-bottom:0;">
+      <p><strong>Comparación: Viajera vs Estacionaria</strong></p>
+      <div style="margin-top:.8rem;overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;font-size:.84rem;">
+          <thead>
+            <tr style="background:rgba(255,255,255,.04);">
+              <th style="padding:.6rem .8rem;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--text-dim);text-align:left;border-bottom:1px solid rgba(255,255,255,.08);">Propiedad</th>
+              <th style="padding:.6rem .8rem;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--accent1);text-align:left;border-bottom:1px solid rgba(255,255,255,.08);">Viajera</th>
+              <th style="padding:.6rem .8rem;font-family:'Space Mono',monospace;font-size:.6rem;letter-spacing:.1em;color:var(--accent4);text-align:left;border-bottom:1px solid rgba(255,255,255,.08);">Estacionaria</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+              <td style="padding:.55rem .8rem;color:var(--text-dim);">Patrón</td>
+              <td style="padding:.55rem .8rem;color:var(--accent1);">Se desplaza</td>
+              <td style="padding:.55rem .8rem;color:var(--accent4);">Fijo en el espacio</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+              <td style="padding:.55rem .8rem;color:var(--text-dim);">Energía</td>
+              <td style="padding:.55rem .8rem;color:var(--accent1);">Transporta</td>
+              <td style="padding:.55rem .8rem;color:var(--accent4);">No transporta</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+              <td style="padding:.55rem .8rem;color:var(--text-dim);">Amplitud</td>
+              <td style="padding:.55rem .8rem;color:var(--accent1);">Igual en todo x</td>
+              <td style="padding:.55rem .8rem;color:var(--accent4);">Varía con x</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+              <td style="padding:.55rem .8rem;color:var(--text-dim);">Nodos</td>
+              <td style="padding:.55rem .8rem;color:var(--accent1);">No existen</td>
+              <td style="padding:.55rem .8rem;color:var(--accent4);">Posiciones fijas</td>
+            </tr>
+            <tr>
+              <td style="padding:.55rem .8rem;color:var(--text-dim);">Origen</td>
+              <td style="padding:.55rem .8rem;color:var(--accent1);">Fuente continua</td>
+              <td style="padding:.55rem .8rem;color:var(--accent4);">Superposición</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIM ONDA VIAJERA -->
+  <div class="sim-box" style="margin-top:2rem;">
+    <div class="sim-header">
+      <span class="sim-title">SIM_00 · ONDA VIAJERA — y = A·sen(kx − ωt)</span>
+      <div class="sim-dots"><div class="sd sd1"></div><div class="sd sd2"></div><div class="sd sd3"></div></div>
+    </div>
+    <div class="sim-body">
+      <canvas id="travSim" width="900" height="200" style="max-width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(192,132,252,.15);border-radius:10px;"></canvas>
+      <div class="controls">
+        <div class="ctrl-g">
+          <div class="ctrl-lbl">Amplitud (A)</div>
+          <input type="range" id="travA" min="10" max="75" step="1" value="50">
+          <div class="ctrl-val" id="travAVal">50</div>
+        </div>
+        <div class="ctrl-g">
+          <div class="ctrl-lbl">Frecuencia (ω)</div>
+          <input type="range" id="travW" min="0.5" max="4" step="0.1" value="1.5">
+          <div class="ctrl-val" id="travWVal">1.5×</div>
+        </div>
+        <div class="ctrl-g">
+          <div class="ctrl-lbl">Armónico (k)</div>
+          <input type="range" id="travK" min="1" max="5" step="1" value="2">
+          <div class="ctrl-val" id="travKVal">n = 2</div>
+        </div>
+        <div class="ctrl-g" style="flex-direction:row;min-width:auto;">
+          <button class="btn btn-p" id="travPause">⏸ Pausar</button>
+          <button class="btn btn-s" id="travDir">← Invertir</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;padding:.5rem;">
+        <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;">Dirección</div><div style="font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent5);" id="travDirLbl">→ +x</div></div>
+        <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;">v = ω/k</div><div style="font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent2);" id="travVLbl">0.75</div></div>
+        <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;">λ = 2π/k</div><div style="font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent1);" id="travLLbl">π</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row" style="margin-top:2rem;">
+    <div class="info-chip"><span class="chip-icon">🎸</span><div class="chip-text"><strong>En cuerdas de instrumentos</strong>Al pulsar una cuerda se generan ondas viajeras que rebotan en los extremos fijos y se superponen para crear los armónicos audibles.</div></div>
+    <div class="info-chip"><span class="chip-icon">🌊</span><div class="chip-text"><strong>Velocidad de fase</strong>Depende del medio: en una cuerda v = √(F/μ). A mayor tensión o menor densidad, mayor velocidad.</div></div>
+    <div class="info-chip"><span class="chip-icon">🔗</span><div class="chip-text"><strong>Conexión con estacionarias</strong>Dos ondas viajeras idénticas en sentidos opuestos se suman para dar <strong>yᴿ = 2A·sen(kx)·cos(ωt)</strong>.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 03 · QUÉ SON ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">03</span>
+    <h2 class="section-title">¿Qué son las <span class="hl">Ondas Estacionarias?</span></h2>
+  </div>
+
+  <div class="theory-block">
+    <p>Consideremos la situación en que una cuerda tiene un <strong>extremo fijo</strong> (el punto O). Una onda transversal incidente moviéndose hacia la izquierda con ecuación:</p>
+    <div class="eq-hl">y₁(x,t) = A₁ · sen(ωt + k·x)</div>
+    <p>se refleja en O, originando una nueva onda que se propaga hacia la derecha:</p>
+    <div class="eq-hl blue">y₂(x,t) = A₂ · sen(ωt − k·x)</div>
+    <p>El desplazamiento resultante en cualquier punto de la cuerda es la <strong>interferencia o superposición</strong> de estas dos ondas:</p>
+    <div class="eq-hl yellow">yᴿ(x,t) = A₁·sen(ωt + k·x) + A₂·sen(ωt − k·x)</div>
+    <p>En el punto fijo O (x = 0) el desplazamiento debe ser siempre cero, lo que nos lleva a la condición fundamental:</p>
+    <div class="eq-hl">yᴿ(0,t) = (A₁ + A₂)·sen(ωt) = 0 → A₁ + A₂ = 0 → <strong>A₁ = −A₂</strong></div>
+    <p>La onda experimenta un <strong>cambio de fase de π</strong> al reflejarse en el extremo fijo.</p>
+  </div>
+
+  <div class="concept-grid">
+    <div class="concept-card"><div class="card-icon">📌</div><div class="card-title">Nodos</div><div class="card-body">Puntos donde la cuerda <strong>permanece inmóvil</strong>. Amplitud = 0. Ocurren por interferencia destructiva permanente cada λ/2.</div></div>
+    <div class="concept-card"><div class="card-icon">🔝</div><div class="card-title">Antinodos</div><div class="card-body">Puntos de <strong>vibración máxima</strong> con amplitud 2A₁. Se ubican a medio camino entre dos nodos consecutivos.</div></div>
+    <div class="concept-card"><div class="card-icon">🔄</div><div class="card-title">Cambio de fase π</div><div class="card-body">Al reflejarse en el extremo fijo la onda se <strong>invierte</strong>. Por eso A₁ = −A₂ y se forman nodos en ese punto.</div></div>
+    <div class="concept-card"><div class="card-icon">🚫</div><div class="card-title">No transporta energía</div><div class="card-body">A diferencia de una onda viajera, la onda estacionaria <strong>no traslada energía</strong> de un punto a otro de la cuerda.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 04 · DERIVACIÓN MATEMÁTICA ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">04</span>
+    <h2 class="section-title">Derivación <span class="hl2">Matemática</span></h2>
+  </div>
+
+  <div class="theory-block">
+    <p>Con la condición A₂ = −A₁, la superposición resulta:</p>
+    <div class="eq-hl yellow">yᴿ = A₁·sen(ωt + k·x) − A₁·sen(ωt − k·x) = A₁[sen(ωt+kx) − sen(ωt−kx)]</div>
+  </div>
+
+  <div class="deriv-box">
+    <div class="deriv-step">
+      <span class="step-tag">PASO 1</span>
+      <div class="step-body">Aplicamos las identidades trigonométricas de suma y diferencia:<br>
+        <span class="m">sen(α+β) = sen(α)cos(β) + cos(α)sen(β)</span><br>
+        <span class="m">sen(α−β) = sen(α)cos(β) − cos(α)sen(β)</span>
+      </div>
+    </div>
+    <div class="deriv-step">
+      <span class="step-tag">PASO 2</span>
+      <div class="step-body">Expandimos la diferencia con α = ωt, β = kx:<br>
+        <span class="m">sen(ωt+kx) − sen(ωt−kx) = 2·cos(ωt)·sen(kx)</span><br>
+        Los términos sen(ωt)·cos(kx) se cancelan entre sí.
+      </div>
+    </div>
+    <div class="deriv-step">
+      <span class="step-tag">RESULTADO</span>
+      <div class="step-body">La ecuación de la onda estacionaria simplificada es:<br>
+        <span class="m" style="color:var(--accent1);font-size:1rem;">yᴿ(x,t) = 2·A₁·sen(k·x)·cos(ω·t)</span>
+      </div>
+    </div>
+    <div class="deriv-step">
+      <span class="step-tag">AMPLITUD</span>
+      <div class="step-body">La amplitud varía de punto en punto:<br>
+        <span class="m">Aᴿ(x) = 2·A₁·sen(k·x)</span><br>
+        Máxima en antinodos (= 2A₁), cero en nodos.
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-chip"><span class="chip-icon">✅</span><div class="chip-text"><strong>No es onda viajera</strong>Las expresiones (ωt ± kx) desaparecen. Representa un MAS cuya amplitud varía con la posición x.</div></div>
+    <div class="info-chip"><span class="chip-icon">📐</span><div class="chip-text"><strong>Nodos</strong>Cuando sen(kx) = 0 → kx = n·π → x = n·λ/2. Los nodos se separan por λ/2.</div></div>
+    <div class="info-chip"><span class="chip-icon">🔊</span><div class="chip-text"><strong>Antinodos</strong>Cuando sen(kx) = ±1. La amplitud máxima es 2A₁, el doble de la onda original.</div></div>
+  </div>
+
+  <!-- SIM SUPERPOSICIÓN -->
+  <div class="sim-box">
+    <div class="sim-header">
+      <span class="sim-title">SIM_01 · SUPERPOSICIÓN — y₁ + y₂ = yᴿ</span>
+      <div class="sim-dots"><div class="sd sd1"></div><div class="sd sd2"></div><div class="sd sd3"></div></div>
+    </div>
+    <div class="sim-body">
+      <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--accent1);letter-spacing:.1em;text-transform:uppercase;align-self:flex-start">→ y₁ Onda incidente</div>
+      <canvas id="ss1" width="900" height="80" style="max-width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(127,255,110,.15);border-radius:8px;"></canvas>
+      <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--accent2);letter-spacing:.1em;text-transform:uppercase;align-self:flex-start">← y₂ Onda reflejada (cambio de fase π)</div>
+      <canvas id="ss2" width="900" height="80" style="max-width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(110,184,255,.15);border-radius:8px;"></canvas>
+      <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--accent4);letter-spacing:.1em;text-transform:uppercase;align-self:flex-start">= yᴿ = 2A₁·sen(kx)·cos(ωt)</div>
+      <canvas id="ssr" width="900" height="120" style="max-width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,224,110,.2);border-radius:8px;"></canvas>
+      <div class="controls">
+        <div class="ctrl-g">
+          <div class="ctrl-lbl">Armónico (n)</div>
+          <input type="range" id="sHarm" min="1" max="4" step="1" value="2">
+          <div class="ctrl-val" id="sHarmVal">n = 2</div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:.72rem;color:var(--text-dim);line-height:1.9;">
+          <span style="color:var(--accent1)">●</span> Incidente &nbsp;
+          <span style="color:var(--accent2)">●</span> Reflejada &nbsp;
+          <span style="color:var(--accent3)">●</span> Nodo<br>
+          Nodos: <span style="color:var(--accent3)" id="sNodes">3</span> &nbsp;|&nbsp;
+          Antinodos: <span style="color:var(--accent1)" id="sAnti">2</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 05 · CONDICIÓN DE CONTORNO ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">05</span>
+    <h2 class="section-title">Nodos y <span class="hl">Condición de Contorno</span></h2>
+  </div>
+
+  <div class="two-col">
+    <div class="theory-block" style="margin-bottom:0">
+      <p>La amplitud Aᴿ(x) = 2A₁·sen(kx) es cero cuando <span class="math">k·x = n·π</span></p>
+      <p>Como k = 2π/λ:</p>
+      <div class="eq-hl" style="margin:.6rem 0">x = n·λ / 2 &nbsp; (nodos)</div>
+      <p>Los nodos sucesivos están separados por <strong>λ/2</strong>.</p>
+      <p>Si el otro extremo (x = L) también es fijo, debe ser un nodo, imponiendo la condición: <span class="math">k·L = n·π</span></p>
+      <p>Esto determina las únicas longitudes de onda posibles:</p>
+      <div class="eq-hl yellow">λₙ = 2L / n &nbsp;&nbsp; n = 1, 2, 3, 4, …</div>
+    </div>
+    <div class="theory-block" style="margin-bottom:0">
+      <p><strong>Longitudes de onda cuantizadas:</strong></p>
+      <div style="font-family:'Space Mono',monospace;font-size:.88rem;color:var(--text-dim);line-height:2.2;background:var(--surface2);border-radius:10px;padding:1rem 1.2rem;margin:.5rem 0;">
+        <span style="color:var(--accent1)">n=1:</span> λ = 2L<br>
+        <span style="color:var(--accent2)">n=2:</span> λ = L<br>
+        <span style="color:var(--accent3)">n=3:</span> λ = 2L/3<br>
+        <span style="color:var(--accent4)">n=4:</span> λ = L/2<br>
+        <span style="color:var(--accent5)">n=N:</span> λ = 2L/N
+      </div>
+      <p style="margin-top:.8rem;">Las frecuencias y longitudes de onda están <strong>cuantizadas</strong> — resultado directo de las condiciones de contorno en ambos extremos.</p>
+    </div>
+  </div>
+
+  <div class="info-row" style="margin-top:2rem;">
+    <div class="info-chip"><span class="chip-icon">🎯</span><div class="chip-text"><strong>n = 1 · λ = 2L</strong>Un semiarco. Fundamental. Frecuencia más baja posible para esa cuerda.</div></div>
+    <div class="info-chip"><span class="chip-icon">🎯</span><div class="chip-text"><strong>n = 2 · λ = L</strong>Dos semiarcos. Un nodo central. Frecuencia el doble de la fundamental.</div></div>
+    <div class="info-chip"><span class="chip-icon">🎯</span><div class="chip-text"><strong>n = 3 · λ = 2L/3</strong>Tres semiarcos. Dos nodos internos. Triple de la fundamental.</div></div>
+    <div class="info-chip"><span class="chip-icon">🔢</span><div class="chip-text"><strong>Cuantización</strong>Solo ciertos valores discretos de λ y f son físicamente posibles en la cuerda.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 06 · MODOS DE VIBRACIÓN ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">06</span>
+    <h2 class="section-title">Modos de <span class="hl2">Vibración</span></h2>
+  </div>
+
+  <div class="modes-grid" id="modesGrid"></div>
+
+  <!-- SIM PRINCIPAL -->
+  <div class="sim-box">
+    <div class="sim-header">
+      <span class="sim-title">SIM_02 · MODOS DE VIBRACIÓN · CUERDA FIJA EN AMBOS EXTREMOS</span>
+      <div class="sim-dots"><div class="sd sd1"></div><div class="sd sd2"></div><div class="sd sd3"></div></div>
+    </div>
+    <div class="sim-body">
+      <canvas id="mainSim" width="900" height="220" style="max-width:100%;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);"></canvas>
+      <div class="controls">
+        <div class="ctrl-g">
+          <div class="ctrl-lbl">Armónico (n)</div>
+          <input type="range" id="hSlider" min="1" max="6" step="1" value="1">
+          <div class="ctrl-val" id="hVal">n = 1</div>
+        </div>
+        <div class="ctrl-g">
+          <div class="ctrl-lbl">Amplitud</div>
+          <input type="range" id="aSlider" min="10" max="80" step="1" value="55">
+          <div class="ctrl-val" id="aVal">55</div>
+        </div>
+        <div class="ctrl-g">
+          <div class="ctrl-lbl">Velocidad</div>
+          <input type="range" id="vSlider" min="0.3" max="3" step="0.1" value="1">
+          <div class="speed-vis">
+            <div class="speed-bar"><div class="speed-fill" id="sFill" style="width:33%"></div></div>
+            <span id="vVal">1.0×</span>
+          </div>
+        </div>
+        <div class="ctrl-g" style="flex-direction:row;min-width:auto;">
+          <button class="btn btn-p" id="pauseBtn">⏸ Pausar</button>
+          <button class="btn btn-s" id="compBtn">Ver componentes</button>
+        </div>
+      </div>
+      <div id="compPanel" style="display:none;width:100%;flex-direction:column;gap:.5rem;">
+        <canvas id="wc1" width="900" height="75" style="max-width:100%;background:rgba(127,255,110,.04);border:1px solid rgba(127,255,110,.12);border-radius:8px;"></canvas>
+        <div style="display:flex;gap:1rem;justify-content:center;font-family:'Space Mono',monospace;font-size:.7rem;color:var(--text-dim)">
+          <span style="color:var(--accent1)">▬ Onda incidente</span>
+          <span style="color:var(--accent2)">▬ Onda reflejada</span>
+        </div>
+        <canvas id="wc2" width="900" height="75" style="max-width:100%;background:rgba(110,184,255,.04);border:1px solid rgba(110,184,255,.12);border-radius:8px;"></canvas>
+      </div>
+      <div style="display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;padding:.5rem;">
+        <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;">Nodos</div><div style="font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent3);" id="nCount">2</div></div>
+        <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;">Antinodos</div><div style="font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent1);" id="anCount">1</div></div>
+        <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;">Longitud de onda</div><div style="font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent2);" id="lVal">λ = 2L</div></div>
+        <div style="text-align:center"><div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--text-dim);letter-spacing:.12em;text-transform:uppercase;">Frecuencia</div><div style="font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent4);" id="fVal">1·f₁</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 07 · FRECUENCIAS Y ARMÓNICOS ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">07</span>
+    <h2 class="section-title">Frecuencias y <span class="hl3">Armónicos</span></h2>
+  </div>
+
+  <div class="theory-block">
+    <p>Las posibles frecuencias de oscilación (llamadas <strong>armónicos</strong>) son todos los múltiplos de la frecuencia fundamental. Como v = λ·f, entonces f = v/λ:</p>
+    <div class="eq-hl blue">fₙ = v / λₙ = n · v / (2L) &nbsp;&nbsp; n = 1, 2, 3, 4, …</div>
+    <p>El valor para n = 1 se llama <strong>frecuencia fundamental</strong>:</p>
+    <div class="eq-hl">f₁ = v / (2L)</div>
+    <p>En general, <strong>todos los armónicos son múltiplos enteros</strong> de la fundamental:</p>
+    <div class="eq-hl yellow">fₙ = n · f₁</div>
+    <p>Las frecuencias y longitudes de onda están <strong>cuantizadas</strong>. La cuantización es el resultado de las condiciones de contorno impuestas en ambos extremos de la cuerda. Esto es análogo a los niveles de energía cuantizados en física cuántica.</p>
+  </div>
+
+  <div class="info-row">
+    <div class="info-chip"><span class="chip-icon">🎵</span><div class="chip-text"><strong>Fundamental n=1</strong>Frecuencia más baja. Un antinodo. En guitarra de 65 cm con v≈423 m/s → f₁ = 325 Hz.</div></div>
+    <div class="info-chip"><span class="chip-icon">🎶</span><div class="chip-text"><strong>2° Armónico n=2</strong>f₂ = 2·f₁. Dos antinodos, un nodo interno. Corresponde a una octava musical.</div></div>
+    <div class="info-chip"><span class="chip-icon">🎼</span><div class="chip-text"><strong>n-ésimo armónico</strong>fₙ = n·f₁. Los instrumentos de cuerda producen combinaciones de estos armónicos.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 08 · VELOCIDAD EN LA CUERDA ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">08</span>
+    <h2 class="section-title">Velocidad de Propagación <span class="hl2">en la Cuerda</span></h2>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <div class="theory-block" style="margin-bottom:1.5rem;">
+        <p>La velocidad de propagación en una cuerda tensa está dada por la <strong>tensión F</strong> y la <strong>densidad lineal μ = m/L</strong>:</p>
+        <div class="eq-hl yellow">v = √(F / μ)</div>
+        <p style="margin-top:.8rem;">La frecuencia completa de cada armónico con F y μ explícitas es:</p>
+        <div class="eq-hl purple">fₙ = (n / 2L) · √(F / μ)</div>
+      </div>
+      <div class="theory-block">
+        <p><strong>Efecto de las variables:</strong></p>
+        <div style="display:flex;flex-direction:column;gap:.8rem;margin-top:.5rem;">
+          <div style="background:var(--surface2);border-radius:10px;padding:.9rem 1.1rem;">
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent4);margin-bottom:.3rem;">TENSIÓN F ↑</div>
+            <div style="font-size:.87rem;color:var(--text-dim);">Mayor F → mayor v → mayor f. Relación: v ∝ √F</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:10px;padding:.9rem 1.1rem;">
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent2);margin-bottom:.3rem;">DENSIDAD LINEAL μ ↑</div>
+            <div style="font-size:.87rem;color:var(--text-dim);">Mayor μ → menor v → menor f. Relación: v ∝ 1/√μ</div>
+          </div>
+          <div style="background:var(--surface2);border-radius:10px;padding:.9rem 1.1rem;">
+            <div style="font-family:'Space Mono',monospace;font-size:.62rem;color:var(--accent3);margin-bottom:.3rem;">LONGITUD L ↑</div>
+            <div style="font-size:.87rem;color:var(--text-dim);">Mayor L → menor f₁ = v/(2L). La velocidad de onda no cambia.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="theory-block">
+      <p><strong>Derivación de v = √(F/μ)</strong></p>
+      <p>Consideramos un segmento Δs de cuerda que forma un arco de radio r moviéndose con rapidez v:</p>
+      <div class="deriv-box" style="margin:.8rem 0;">
+        <div class="deriv-step">
+          <span class="step-tag">1</span>
+          <div class="step-body">Masa del elemento: <span class="m">Δm = μ·Δs</span></div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-tag">2</span>
+          <div class="step-body">Las componentes horizontales de tensión se anulan. Las verticales:<br><span class="m">Fᴿ = 2·F·sen(θ) ≈ 2·F·θ</span> (para θ pequeño)</div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-tag">3</span>
+          <div class="step-body">El ángulo θ en radianes: <span class="m">θ = Δs/(2r)</span><br>Entonces: <span class="m">Fᴿ = F·Δs/r</span></div>
+        </div>
+        <div class="deriv-step">
+          <span class="step-tag">4</span>
+          <div class="step-body">Igualando a la fuerza centrípeta:<br><span class="m">F·Δs/r = μ·Δs·v²/r</span><br><span class="m">∴ F = μ·v² → v = √(F/μ)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALCULADORA -->
+  <div class="calc-wrap">
+    <div class="calc-title">🧮 Calculadora Interactiva de Armónicos</div>
+    <div class="calc-grid">
+      <div class="calc-field"><label class="calc-lbl">Tensión F (N)</label><input class="calc-inp" type="number" id="cF" value="19.6" step="0.1"></div>
+      <div class="calc-field"><label class="calc-lbl">Masa cuerda m (kg)</label><input class="calc-inp" type="number" id="cM" value="0.300" step="0.001"></div>
+      <div class="calc-field"><label class="calc-lbl">Longitud L (m)</label><input class="calc-inp" type="number" id="cL" value="6.00" step="0.01"></div>
+      <div class="calc-field"><label class="calc-lbl">Armónico n</label><input class="calc-inp" type="number" id="cN" value="1" min="1" max="10"></div>
+    </div>
+    <div class="calc-res">
+      <div class="res-item"><div class="res-lbl">μ = m/L (kg/m)</div><div class="res-val" id="rMu">0.0500</div></div>
+      <div class="res-item"><div class="res-lbl">v = √(F/μ) (m/s)</div><div class="res-val" id="rV">19.80</div></div>
+      <div class="res-item"><div class="res-lbl">λₙ = 2L/n (m)</div><div class="res-val" id="rL">12.00</div></div>
+      <div class="res-item"><div class="res-lbl">fₙ = nv/2L (Hz)</div><div class="res-val" id="rF">1.65</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 09 · EJEMPLO RESUELTO ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">09</span>
+    <h2 class="section-title">Ejemplo <span class="hl">Resuelto</span></h2>
+  </div>
+
+  <div class="example-box">
+    <div class="ex-title">📋 Enunciado</div>
+    <div class="ex-body">
+      <p>Una cuerda uniforme tiene una masa de <strong>0.300 kg</strong> y una longitud de <strong>6.00 m</strong>. La cuerda pasa sobre una polea y soporta un objeto de <strong>2.00 kg</strong>. Encuentre la rapidez de un pulso y la frecuencia fundamental.</p>
+    </div>
+    <div class="ex-sol">
+      <div class="sol-row"><span class="sol-tag">DATO</span><div class="sol-txt">La tensión es igual al peso del bloque: <span class="m">F = m·g = 2.00 × 9.8 = 19.6 N</span></div></div>
+      <div class="sol-row"><span class="sol-tag">DATO</span><div class="sol-txt">Densidad lineal: <span class="m">μ = 0.300 kg / 6.00 m = 0.050 kg/m</span></div></div>
+      <div class="sol-row"><span class="sol-tag">PASO 1</span><div class="sol-txt">Velocidad: <span class="m">v = √(F/μ) = √(19.6/0.050) = √392 ≈ 19.8 m/s</span></div></div>
+      <div class="sol-row"><span class="sol-tag">PASO 2</span><div class="sol-txt">Frecuencia fundamental: <span class="m">f₁ = v/(2L) = 19.8/(2×6.00) ≈ 1.65 Hz</span></div></div>
+      <div class="sol-row"><span class="sol-tag">EXTRA</span><div class="sol-txt">Armónicos siguientes: <span class="m">f₂ = 3.30 Hz | f₃ = 4.95 Hz | f₄ = 6.60 Hz</span></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 10 · AUTOEVALUACIÓN ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">10</span>
+    <h2 class="section-title">Autoevaluación <span class="hl2">Interactiva</span></h2>
+  </div>
+  <div class="quiz-wrap"><div id="quizContent"></div></div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 11 · GLOSARIO ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">11</span>
+    <h2 class="section-title">Glosario de <span class="hl3">Términos</span></h2>
+  </div>
+  <div class="glossary">
+    <div class="gloss-item"><div class="gloss-term">Onda estacionaria</div><div class="gloss-def">Patrón fijo de vibración por superposición de dos ondas idénticas en sentidos opuestos. No transporta energía.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Nodo</div><div class="gloss-def">Punto de amplitud permanente cero. Separados por λ/2. Resultado de interferencia destructiva continua.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Antinodo</div><div class="gloss-def">Punto de amplitud máxima 2A₁. Entre nodos consecutivos. Resultado de interferencia constructiva.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Armónico</div><div class="gloss-def">Modo natural de vibración. Los armónicos son múltiplos enteros de la frecuencia fundamental.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Frecuencia fundamental (f₁)</div><div class="gloss-def">Frecuencia más baja posible para la cuerda. n=1. f₁ = v/(2L). Un solo antinodo.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Condición de contorno</div><div class="gloss-def">Los extremos fijos deben ser siempre nodos. Esto cuantiza las longitudes de onda y frecuencias.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Cuantización</div><div class="gloss-def">Solo existen valores discretos: λₙ = 2L/n y fₙ = n·f₁. No cualquier frecuencia es posible.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Densidad lineal (μ)</div><div class="gloss-def">Masa por unidad de longitud [kg/m]. μ = m/L. A mayor μ, menor velocidad de propagación.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Tensión (F)</div><div class="gloss-def">Fuerza de estiramiento de la cuerda [N]. A mayor F, mayor velocidad y mayor frecuencia.</div></div>
+    <div class="gloss-item"><div class="gloss-term">Cambio de fase π</div><div class="gloss-def">Al reflejar en extremo fijo: A₁ = −A₂. La onda se invierte. Origen de los nodos en ese punto.</div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══ 12 · TABLA DE FÓRMULAS ═══ -->
+<section class="section reveal">
+  <div class="section-header">
+    <span class="section-num">12</span>
+    <h2 class="section-title">Tabla de <span class="hl">Fórmulas</span></h2>
+  </div>
+
+  <div class="ftable-section">
+    <div class="ftable-hdr">
+      <div class="ftable-hdr-title">Ondas Estacionarias en <span>Cuerdas</span> — Formulario</div>
+      <div class="ftable-hdr-sub">Resumen completo de ecuaciones, relaciones y condiciones</div>
+    </div>
+    <div class="ftable-wrap">
+      <table class="ft">
+        <thead>
+          <tr>
+            <th>Categoría</th>
+            <th>Nombre / Descripción</th>
+            <th>Ecuación</th>
+            <th>Variables</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge bw">Ondas</span></td>
+            <td class="ft-name">Onda incidente<small>Hacia el extremo fijo</small></td>
+            <td><span class="ft-eq" style="color:var(--accent1)">y₁(x,t) = A₁·sen(ωt + kx)</span></td>
+            <td class="ft-vars"><span>A₁</span> = amplitud, <span>ω</span> = frecuencia angular, <span>k</span> = número de onda</td>
+          </tr>
+          <tr>
+            <td><span class="badge bw">Ondas</span></td>
+            <td class="ft-name">Onda reflejada<small>Sentido contrario, fase invertida</small></td>
+            <td><span class="ft-eq" style="color:var(--accent2)">y₂(x,t) = A₂·sen(ωt − kx)</span></td>
+            <td class="ft-vars"><span>A₂</span> = −A₁ por cambio de fase π en extremo fijo</td>
+          </tr>
+          <tr>
+            <td><span class="badge bw">Ondas</span></td>
+            <td class="ft-name">Superposición<small>Suma de ambas ondas</small></td>
+            <td><span class="ft-eq" style="color:var(--text-dim)">yᴿ = A₁·sen(ωt+kx) + A₂·sen(ωt−kx)</span></td>
+            <td class="ft-vars">Principio de superposición lineal</td>
+          </tr>
+          <tr style="background:rgba(127,255,110,.03);">
+            <td><span class="badge ba">Resultante</span></td>
+            <td class="ft-name">Ecuación onda estacionaria<small>Forma simplificada final</small></td>
+            <td><span class="ft-eq" style="color:var(--accent4);font-size:1.05rem;">yᴿ(x,t) = 2A₁·sen(kx)·cos(ωt)</span></td>
+            <td class="ft-vars">MAS con amplitud variable. No es onda viajera.</td>
+          </tr>
+          <tr>
+            <td><span class="badge ba">Resultante</span></td>
+            <td class="ft-name">Amplitud resultante<small>Función de posición</small></td>
+            <td><span class="ft-eq" style="color:var(--accent3)">Aᴿ(x) = 2·A₁·sen(k·x)</span></td>
+            <td class="ft-vars">Máx. en antinodos = 2A₁ | Cero en nodos</td>
+          </tr>
+          <tr>
+            <td><span class="badge bw">Geometría</span></td>
+            <td class="ft-name">Posición de nodos<small>Amplitud = 0</small></td>
+            <td><span class="ft-eq" style="color:var(--accent1)">xₙ = n · λ/2</span></td>
+            <td class="ft-vars"><span>n</span> = 0, 1, 2, 3, … &nbsp;|&nbsp; Separación entre nodos = λ/2</td>
+          </tr>
+          <tr>
+            <td><span class="badge bw">Geometría</span></td>
+            <td class="ft-name">Posición de antinodos<small>Amplitud = 2A₁</small></td>
+            <td><span class="ft-eq" style="color:var(--accent1)">xₐ = (2n−1) · λ/4</span></td>
+            <td class="ft-vars"><span>n</span> = 1, 2, 3, … &nbsp;|&nbsp; A mitad entre nodos</td>
+          </tr>
+          <tr>
+            <td><span class="badge bf">Condición</span></td>
+            <td class="ft-name">Condición de extremo fijo<small>k·L = n·π</small></td>
+            <td><span class="ft-eq" style="color:var(--accent2)">(2π/λ)·L = n·π</span></td>
+            <td class="ft-vars">El extremo x=L debe ser un nodo</td>
+          </tr>
+          <tr style="background:rgba(110,184,255,.03);">
+            <td><span class="badge bf">Condición</span></td>
+            <td class="ft-name">Longitud de onda permitida<small>Cuerda fija en ambos extremos</small></td>
+            <td><span class="ft-eq" style="color:var(--accent2);font-size:1.05rem;">λₙ = 2L / n</span></td>
+            <td class="ft-vars"><span>L</span> = longitud de la cuerda &nbsp;|&nbsp; <span>n</span> = 1, 2, 3, 4, …</td>
+          </tr>
+          <tr>
+            <td><span class="badge bf">Condición</span></td>
+            <td class="ft-name">Número de onda<small>Relación k, λ</small></td>
+            <td><span class="ft-eq" style="color:var(--accent2)">k = 2π / λ</span></td>
+            <td class="ft-vars"><span>k</span> en rad/m &nbsp;|&nbsp; <span>λ</span> en m</td>
+          </tr>
+          <tr>
+            <td><span class="badge bf">Frecuencia</span></td>
+            <td class="ft-name">Frecuencia fundamental<small>Primer armónico n=1</small></td>
+            <td><span class="ft-eq" style="color:var(--accent2)">f₁ = v / (2L)</span></td>
+            <td class="ft-vars"><span>v</span> = velocidad de onda [m/s] &nbsp;|&nbsp; <span>L</span> = longitud [m]</td>
+          </tr>
+          <tr style="background:rgba(110,184,255,.03);">
+            <td><span class="badge bf">Frecuencia</span></td>
+            <td class="ft-name">n-ésimo armónico<small>Frecuencias permitidas</small></td>
+            <td><span class="ft-eq" style="color:var(--accent2);font-size:1.05rem;">fₙ = n · v / (2L)</span></td>
+            <td class="ft-vars"><span>n</span> = 1, 2, 3, … &nbsp;|&nbsp; Solo estas frecuencias son posibles</td>
+          </tr>
+          <tr>
+            <td><span class="badge bf">Frecuencia</span></td>
+            <td class="ft-name">Relación entre armónicos</td>
+            <td><span class="ft-eq" style="color:var(--accent2)">fₙ = n · f₁</span></td>
+            <td class="ft-vars">Todos los armónicos son múltiplos enteros de f₁</td>
+          </tr>
+          <tr>
+            <td><span class="badge bv">Velocidad</span></td>
+            <td class="ft-name">Relación onda<small>Velocidad, λ y frecuencia</small></td>
+            <td><span class="ft-eq" style="color:var(--accent4)">v = λ · f</span></td>
+            <td class="ft-vars"><span>v</span> en m/s &nbsp;|&nbsp; <span>λ</span> en m &nbsp;|&nbsp; <span>f</span> en Hz</td>
+          </tr>
+          <tr style="background:rgba(255,224,110,.03);">
+            <td><span class="badge bv">Velocidad</span></td>
+            <td class="ft-name">Velocidad en la cuerda<small>Derivada de fuerza centrípeta</small></td>
+            <td><span class="ft-eq" style="color:var(--accent4);font-size:1.05rem;">v = √(F / μ)</span></td>
+            <td class="ft-vars"><span>F</span> = tensión [N] &nbsp;|&nbsp; <span>μ</span> = densidad lineal [kg/m]</td>
+          </tr>
+          <tr>
+            <td><span class="badge bv">Velocidad</span></td>
+            <td class="ft-name">Densidad lineal<small>Masa por unidad de longitud</small></td>
+            <td><span class="ft-eq" style="color:var(--accent4)">μ = m / L</span></td>
+            <td class="ft-vars"><span>m</span> = masa total [kg] &nbsp;|&nbsp; <span>L</span> = longitud total [m]</td>
+          </tr>
+          <tr>
+            <td><span class="badge bp">Derivación</span></td>
+            <td class="ft-name">Fuerza en el segmento<small>θ pequeño → sen(θ) ≈ θ</small></td>
+            <td><span class="ft-eq" style="color:var(--accent5)">Fᴿ = 2·F·θ = F·Δs/r</span></td>
+            <td class="ft-vars"><span>θ</span> = Δs/2r &nbsp;|&nbsp; <span>r</span> = radio de curvatura</td>
+          </tr>
+          <tr>
+            <td><span class="badge bp">Derivación</span></td>
+            <td class="ft-name">Fuerza centrípeta del segmento</td>
+            <td><span class="ft-eq" style="color:var(--accent5)">Fc = μ·Δs·v² / r</span></td>
+            <td class="ft-vars">Igualando Fᴿ = Fc → F = μ·v²</td>
+          </tr>
+          <tr class="ft-highlight">
+            <td><span class="badge bp">COMPLETA</span></td>
+            <td class="ft-name" style="color:var(--accent5)">Frecuencia con F y μ<small>Fórmula unificada final</small></td>
+            <td><span class="ft-eq" style="color:var(--accent5);font-size:1.15rem;">fₙ = (n / 2L) · √(F / μ)</span></td>
+            <td class="ft-vars"><span>n</span> = 1,2,3,… &nbsp;|&nbsp; <span>F</span> [N] &nbsp;|&nbsp; <span>μ</span> [kg/m] &nbsp;|&nbsp; <span>L</span> [m]</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Cuadernillo de Física Ondulatoria · <strong>Cuerdas Tensas</strong></p>
+  <p style="margin-top:.5rem;font-size:.78rem;">Mariana Alzate · Manuela Foronda · Camila Marín · Eddier Bohórquez</p>
+</footer>
+
+<script>
+// SIM ONDA VIAJERA
+const travCtx = document.getElementById('travSim').getContext('2d');
+const TW = document.getElementById('travSim').width;
+let travA = 50, travW = 1.5, travK = 2, travDir = 1, travPaused = false;
+document.getElementById('travA').oninput = e => { travA = +e.target.value; document.getElementById('travAVal').textContent = travA; };
+document.getElementById('travW').oninput = e => { travW = +e.target.value; document.getElementById('travWVal').textContent = travW + '×'; updateTravInfo(); };
+document.getElementById('travK').oninput = e => { travK = +e.target.value; document.getElementById('travKVal').textContent = 'n = ' + travK; updateTravInfo(); };
+document.getElementById('travPause').onclick = () => { travPaused = !travPaused; document.getElementById('travPause').textContent = travPaused ? '▶ Reanudar' : '⏸ Pausar'; };
+document.getElementById('travDir').onclick = () => { travDir *= -1; document.getElementById('travDirLbl').textContent = travDir > 0 ? '→ +x' : '← −x'; };
+function updateTravInfo() {
+  document.getElementById('travVLbl').textContent = (travW / travK).toFixed(2);
+  document.getElementById('travLLbl').textContent = (2 * Math.PI / travK).toFixed(2) + ' u';
+}
+updateTravInfo();
+let travT = 0;
+function drawTrav(ts) {
+  if (!travPaused) travT = ts / 1000;
+  const SL = TW - 20, H = document.getElementById('travSim').height;
+  travCtx.clearRect(0, 0, TW, H);
+  travCtx.beginPath();
+  travCtx.strokeStyle = 'rgba(255,255,255,.05)'; travCtx.lineWidth = 1;
+  travCtx.moveTo(10, H/2); travCtx.lineTo(TW-10, H/2); travCtx.stroke();
+  travCtx.beginPath();
+  for (let x = 0; x <= SL; x++) {
+    const phase = travK * (2 * Math.PI * x / SL) - travDir * travW * travT * Math.PI;
+    const y = H/2 + travA * Math.sin(phase);
+    x === 0 ? travCtx.moveTo(x+10, y) : travCtx.lineTo(x+10, y);
+  }
+  travCtx.strokeStyle = 'rgba(192,132,252,.9)'; travCtx.lineWidth = 2.5;
+  travCtx.shadowBlur = 10; travCtx.shadowColor = 'rgba(192,132,252,.5)';
+  travCtx.stroke(); travCtx.shadowBlur = 0;
+  const dotX = ((travDir * travW * travT * 50) % SL + SL) % SL;
+  travCtx.beginPath();
+  travCtx.arc(dotX + 10, H/2 + travA * Math.sin(travK * (2 * Math.PI * dotX / SL) - travDir * travW * travT * Math.PI), 6, 0, Math.PI*2);
+  travCtx.fillStyle = 'rgba(255,224,110,.95)'; travCtx.shadowBlur = 12; travCtx.shadowColor = 'rgba(255,224,110,.8)';
+  travCtx.fill(); travCtx.shadowBlur = 0;
+  requestAnimationFrame(drawTrav);
+}
+requestAnimationFrame(drawTrav);
+
+// PORTADA
+const cvCtx=document.getElementById('coverWave').getContext('2d');
+function drawCoverWaves(t){
+  const W=1400,H=220; cvCtx.clearRect(0,0,W,H);
+  [{n:1,c:'rgba(127,255,110,.14)',a:60},{n:2,c:'rgba(110,184,255,.11)',a:35},{n:3,c:'rgba(255,110,184,.08)',a:22}].forEach(h=>{
+    cvCtx.beginPath();
+    for(let x=0;x<=W;x++){const y=H/2+h.a*Math.sin(h.n*Math.PI*x/W)*Math.cos(2*Math.PI*t*.7);x===0?cvCtx.moveTo(x,y):cvCtx.lineTo(x,y);}
+    cvCtx.strokeStyle=h.c;cvCtx.lineWidth=2;cvCtx.stroke();
+  });
+  requestAnimationFrame(tt=>drawCoverWaves(tt/1000));
+}
+drawCoverWaves(0);
+
+// CALCULADORA
+function calcUpdate(){
+  const F=parseFloat(document.getElementById('cF').value)||0.001;
+  const M=parseFloat(document.getElementById('cM').value)||0.001;
+  const L=parseFloat(document.getElementById('cL').value)||0.001;
+  const N=parseInt(document.getElementById('cN').value)||1;
+  const mu=M/L,v=Math.sqrt(F/mu),lam=2*L/N,fn=N*v/(2*L);
+  document.getElementById('rMu').textContent=mu.toFixed(4);
+  document.getElementById('rV').textContent=isFinite(v)?v.toFixed(2):'—';
+  document.getElementById('rL').textContent=lam.toFixed(3);
+  document.getElementById('rF').textContent=isFinite(fn)?fn.toFixed(2):'—';
+}
+['cF','cM','cL','cN'].forEach(id=>document.getElementById(id).addEventListener('input',calcUpdate));
+calcUpdate();
+
+// SIM PRINCIPAL
+const mainC=document.getElementById('mainSim'),mCtx=mainC.getContext('2d');
+const MW=mainC.width,MH=mainC.height;
+let hn=1,amp=55,spd=1,paused=false,showComp=false,T=0;
+
+function updInfo(){
+  document.getElementById('hVal').textContent=`n = ${hn}`;
+  document.getElementById('aVal').textContent=amp;
+  document.getElementById('nCount').textContent=hn+1;
+  document.getElementById('anCount').textContent=hn;
+  const ll=['2L','L','2L/3','L/2','2L/5','L/3'];
+  document.getElementById('lVal').textContent=`λ = ${ll[hn-1]}`;
+  document.getElementById('fVal').textContent=`${hn}·f₁`;
+  const p=((spd-.3)/(3-.3)*100).toFixed(0);
+  document.getElementById('sFill').style.width=p+'%';
+  document.getElementById('vVal').textContent=spd.toFixed(1)+'×';
+}
+document.getElementById('hSlider').oninput=e=>{hn=+e.target.value;updInfo();};
+document.getElementById('aSlider').oninput=e=>{amp=+e.target.value;updInfo();};
+document.getElementById('vSlider').oninput=e=>{spd=+e.target.value;updInfo();};
+document.getElementById('pauseBtn').onclick=function(){paused=!paused;this.textContent=paused?'▶ Reanudar':'⏸ Pausar';};
+document.getElementById('compBtn').onclick=function(){
+  showComp=!showComp;
+  const p=document.getElementById('compPanel');
+  p.style.display=showComp?'flex':'none';
+  this.textContent=showComp?'Ocultar':'Ver componentes';
+};
+
+function drawMain(ts){
+  if(!paused) T=ts/1000*spd;
+  mCtx.clearRect(0,0,MW,MH);
+  const L=MW-50,ph=Math.abs(Math.cos(2*Math.PI*T));
+  for(let i=1;i<=hn;i++){
+    const xg=25+L*(i-.5)/hn;
+    const g=mCtx.createRadialGradient(xg,MH/2,0,xg,MH/2,amp*1.5);
+    g.addColorStop(0,`rgba(127,255,110,${ph*.1})`);g.addColorStop(1,'transparent');
+    mCtx.fillStyle=g;mCtx.fillRect(0,0,MW,MH);
+  }
+  mCtx.beginPath();mCtx.strokeStyle='rgba(255,255,255,.05)';mCtx.lineWidth=1;
+  mCtx.moveTo(25,MH/2);mCtx.lineTo(MW-25,MH/2);mCtx.stroke();
+  mCtx.beginPath();
+  for(let x=0;x<=L;x++){
+    const y=MH/2+amp*Math.sin(hn*Math.PI*x/L)*Math.cos(2*Math.PI*T);
+    x===0?mCtx.moveTo(x+25,y):mCtx.lineTo(x+25,y);
+  }
+  const g2=mCtx.createLinearGradient(25,0,MW-25,0);
+  g2.addColorStop(0,`rgba(127,255,110,${.4+ph*.6})`);
+  g2.addColorStop(.5,`rgba(110,184,255,${.4+ph*.6})`);
+  g2.addColorStop(1,`rgba(255,110,184,${.4+ph*.6})`);
+  mCtx.strokeStyle=g2;mCtx.lineWidth=3;
+  mCtx.shadowBlur=12*ph;mCtx.shadowColor='rgba(127,255,110,.6)';
+  mCtx.stroke();mCtx.shadowBlur=0;
+  for(let i=0;i<=hn;i++){
+    const x=25+L*i/hn;
+    mCtx.beginPath();mCtx.arc(x,MH/2,6,0,Math.PI*2);
+    mCtx.fillStyle='#ff6eb8';mCtx.shadowBlur=10;mCtx.shadowColor='#ff6eb8';
+    mCtx.fill();mCtx.shadowBlur=0;
+  }
+  for(let i=1;i<=hn;i++){
+    const x=25+L*(i-.5)/hn,dy=amp*Math.cos(2*Math.PI*T);
+    mCtx.beginPath();mCtx.arc(x,MH/2+dy,5,0,Math.PI*2);
+    mCtx.fillStyle='#7fff6e';mCtx.shadowBlur=10;mCtx.shadowColor='#7fff6e';
+    mCtx.fill();mCtx.shadowBlur=0;
+  }
+  [25,MW-25].forEach(x=>{
+    mCtx.beginPath();mCtx.arc(x,MH/2,8,0,Math.PI*2);
+    mCtx.fillStyle='#ffe06e';mCtx.shadowBlur=14;mCtx.shadowColor='#ffe06e';
+    mCtx.fill();mCtx.shadowBlur=0;
+  });
+  mCtx.font='11px Space Mono,monospace';
+  mCtx.fillStyle='rgba(255,110,184,.8)';mCtx.fillText('● Nodo',30,MH-18);
+  mCtx.fillStyle='rgba(127,255,110,.8)';mCtx.fillText('● Antinodo',110,MH-18);
+  mCtx.fillStyle='rgba(255,224,110,.8)';mCtx.fillText('● Extremo fijo',210,MH-18);
+  if(showComp) drawComp();
+  requestAnimationFrame(drawMain);
+}
+requestAnimationFrame(drawMain);
+updInfo();
+
+function drawComp(){
+  const c1=document.getElementById('wc1').getContext('2d');
+  const c2=document.getElementById('wc2').getContext('2d');
+  const CW=document.getElementById('wc1').width,CH=75,CL=CW-30;
+  c1.clearRect(0,0,CW,CH);c2.clearRect(0,0,CW,CH);
+  c1.beginPath();
+  for(let x=0;x<=CL;x++){const y=CH/2+(amp*.8)*Math.sin(hn*2*Math.PI*x/CL-2*Math.PI*T);x===0?c1.moveTo(x+15,y):c1.lineTo(x+15,y);}
+  c1.strokeStyle='rgba(127,255,110,.85)';c1.lineWidth=2.5;c1.stroke();
+  c2.beginPath();
+  for(let x=0;x<=CL;x++){const y=CH/2+(amp*.8)*Math.sin(hn*2*Math.PI*x/CL+2*Math.PI*T);x===0?c2.moveTo(x+15,y):c2.lineTo(x+15,y);}
+  c2.strokeStyle='rgba(110,184,255,.85)';c2.lineWidth=2.5;c2.stroke();
+}
+
+// MODOS
+const MC=[{r:'127,255,110'},{r:'110,184,255'},{r:'255,110,184'},{r:'255,224,110'}];
+const MN=['Fundamental','2° Armónico','3° Armónico','4° Armónico'];
+const ML=['λ = 2L','λ = L','λ = 2L/3','λ = L/2'];
+const mg=document.getElementById('modesGrid'),mCtxArr=[];
+for(let i=0;i<4;i++){
+  const c=document.createElement('div');c.className='mode-card';
+  const ni=i+1,co=MC[i];
+  c.innerHTML=`<div class="mode-cw"><canvas id="mc${i}" width="280" height="90" style="max-width:100%;background:rgba(0,0,0,.25);border-radius:8px;border:1px solid rgba(${co.r},.15);"></canvas></div>
+  <div class="mode-info"><div class="mode-lbl" style="color:rgba(${co.r},.9)">n = ${ni} · ${ni} antinodo${ni>1?'s':''}</div>
+  <div class="mode-name">${MN[i]}</div><div class="mode-f">${ML[i]} | f = ${ni}f₁</div></div>`;
+  mg.appendChild(c);
+  mCtxArr.push({ctx:document.getElementById(`mc${i}`).getContext('2d'),n:ni,r:co.r});
+}
+function animModes(ts){
+  const tt=ts/1000;
+  mCtxArr.forEach(({ctx,n:ni,r})=>{
+    const W=ctx.canvas.width,H=ctx.canvas.height,L=W-30,a=32;
+    ctx.clearRect(0,0,W,H);
+    ctx.beginPath();ctx.strokeStyle='rgba(255,255,255,.05)';ctx.lineWidth=1;
+    ctx.moveTo(15,H/2);ctx.lineTo(W-15,H/2);ctx.stroke();
+    ctx.beginPath();
+    for(let x=0;x<=L;x++){const y=H/2+a*Math.sin(ni*Math.PI*x/L)*Math.cos(2*Math.PI*tt*(.7+ni*.1));x===0?ctx.moveTo(x+15,y):ctx.lineTo(x+15,y);}
+    const ph=Math.abs(Math.cos(2*Math.PI*tt*(.7+ni*.1)));
+    ctx.strokeStyle=`rgba(${r},${.3+ph*.7})`;ctx.lineWidth=2.5;
+    ctx.shadowBlur=8*ph;ctx.shadowColor=`rgba(${r},.6)`;ctx.stroke();ctx.shadowBlur=0;
+    for(let j=0;j<=ni;j++){const x=15+L*j/ni;ctx.beginPath();ctx.arc(x,H/2,4,0,Math.PI*2);ctx.fillStyle=`rgba(${r},.9)`;ctx.fill();}
+  });
+  requestAnimationFrame(animModes);
+}
+requestAnimationFrame(animModes);
+
+// SIM SUPERPOSICIÓN
+const s1c=document.getElementById('ss1').getContext('2d');
+const s2c=document.getElementById('ss2').getContext('2d');
+const src=document.getElementById('ssr').getContext('2d');
+const SW=document.getElementById('ss1').width;
+let sn=2;
+document.getElementById('sHarm').oninput=e=>{
+  sn=+e.target.value;
+  document.getElementById('sHarmVal').textContent=`n = ${sn}`;
+  document.getElementById('sNodes').textContent=sn+1;
+  document.getElementById('sAnti').textContent=sn;
+};
+function drawSuper(ts){
+  const tt=ts/1000,SL=SW-20,h=80,hr=120,a=32;
+  s1c.clearRect(0,0,SW,h);s1c.beginPath();
+  for(let x=0;x<=SL;x++){const y=h/2+a*Math.sin(sn*2*Math.PI*x/SL-2*Math.PI*tt*.8);x===0?s1c.moveTo(x+10,y):s1c.lineTo(x+10,y);}
+  s1c.strokeStyle='rgba(127,255,110,.85)';s1c.lineWidth=2.5;s1c.stroke();
+  s2c.clearRect(0,0,SW,h);s2c.beginPath();
+  for(let x=0;x<=SL;x++){const y=h/2+a*Math.sin(sn*2*Math.PI*x/SL+2*Math.PI*tt*.8);x===0?s2c.moveTo(x+10,y):s2c.lineTo(x+10,y);}
+  s2c.strokeStyle='rgba(110,184,255,.85)';s2c.lineWidth=2.5;s2c.stroke();
+  src.clearRect(0,0,SW,hr);src.beginPath();
+  for(let x=0;x<=SL;x++){
+    const y1=a*Math.sin(sn*2*Math.PI*x/SL-2*Math.PI*tt*.8);
+    const y2=a*Math.sin(sn*2*Math.PI*x/SL+2*Math.PI*tt*.8);
+    const y=hr/2+(y1+y2)*.75;x===0?src.moveTo(x+10,y):src.lineTo(x+10,y);
+  }
+  const phi=Math.abs(Math.cos(2*Math.PI*tt*.8));
+  src.strokeStyle='rgba(255,224,110,.9)';src.lineWidth=3;
+  src.shadowBlur=10*phi;src.shadowColor='rgba(255,224,110,.7)';src.stroke();src.shadowBlur=0;
+  for(let j=0;j<=sn;j++){const x=10+SL*j/sn;src.beginPath();src.arc(x,hr/2,5,0,Math.PI*2);src.fillStyle='rgba(255,110,184,.9)';src.fill();}
+  requestAnimationFrame(drawSuper);
+}
+requestAnimationFrame(drawSuper);
+
+// QUIZ
+const QD=[
+  {q:'¿Qué condición debe cumplirse en los extremos de la cuerda para formar ondas estacionarias?',opts:['La amplitud debe ser máxima','Los extremos deben ser nodos (desplazamiento cero)','La frecuencia debe ser muy alta','La tensión debe ser nula'],ans:1,fb:'¡Correcto! Los extremos fijos siempre deben ser nodos, lo que cuantiza las frecuencias permitidas.'},
+  {q:'¿Qué le ocurre a la onda al reflejarse en un extremo fijo?',opts:['Aumenta su amplitud','Su frecuencia se duplica','Experimenta un cambio de fase de π (se invierte)','Disminuye su velocidad'],ans:2,fb:'¡Exacto! La reflexión en el extremo fijo invierte la onda: A₁ = −A₂. Este cambio de fase es la razón de que se formen nodos.'},
+  {q:'¿Cuál es la ecuación simplificada de la onda estacionaria?',opts:['y = A₁·sen(ωt+kx)','y = 2A₁·sen(kx)·cos(ωt)','y = A₁·cos(kx−ωt)','y = A₁·sen(kx+ωt)'],ans:1,fb:'¡Perfecto! Aplicando identidades trigonométricas a la superposición se obtiene yᴿ = 2A₁·sen(kx)·cos(ωt).'},
+  {q:'¿Cuántos nodos tiene el 4° armónico (n=4)?',opts:['4','5','3','6'],ans:1,fb:'¡Bien! El n-ésimo armónico tiene n+1 nodos (incluyendo los dos extremos fijos). Para n=4: 5 nodos.'},
+  {q:'Si se cuadruplica la tensión F, ¿qué ocurre con la frecuencia fundamental?',opts:['Se cuadruplica','Se duplica (×2)','Disminuye a la mitad','No cambia'],ans:1,fb:'¡Correcto! f₁ ∝ √F. Si F→4F, entonces f₁→f₁·√4 = 2·f₁. La frecuencia se duplica.'},
+  {q:'¿Cuál es la fórmula completa para la frecuencia del n-ésimo armónico en función de F y μ?',opts:['fₙ = n·v/L','fₙ = (n/2L)·√(F/μ)','fₙ = (1/2L)·√(μ/F)','fₙ = n·√(F·μ)'],ans:1,fb:'¡Exacto! fₙ = (n/2L)·√(F/μ) combina v = √(F/μ) con la relación fₙ = nv/(2L).'},
+];
+let cQ=0,ans=false;
+function renderQ(){
+  const q=QD[cQ],L=['A','B','C','D'];
+  document.getElementById('quizContent').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;">
+      <span style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--text-dim);letter-spacing:.12em;">PREGUNTA ${cQ+1} / ${QD.length}</span>
+      <div style="display:flex;gap:4px;">${QD.map((_,i)=>`<div style="width:28px;height:4px;border-radius:4px;background:${i<cQ?'var(--accent1)':i===cQ?'rgba(127,255,110,.4)':'rgba(255,255,255,.1)'}"></div>`).join('')}</div>
+    </div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="selAns(${i})"><span class="opt-l">${L[i]}</span>${o}</button>`).join('')}</div>
+    <div class="quiz-fb" id="qfb"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
+      <button class="btn btn-s" id="nxtBtn" style="display:none" onclick="nextQ()">Siguiente →</button>
+    </div>`;
+  ans=false;
+}
+window.selAns=function(i){
+  if(ans)return;ans=true;
+  const q=QD[cQ];
+  document.querySelectorAll('.quiz-opt').forEach((o,j)=>{
+    if(j===q.ans)o.classList.add('correct');
+    else if(j===i&&i!==q.ans)o.classList.add('wrong');
+    o.onclick=null;
+  });
+  const fb=document.getElementById('qfb');
+  fb.className=i===q.ans?'quiz-fb ok show':'quiz-fb fail show';
+  fb.textContent=(i===q.ans?'✓ ':'✗ Incorrecto. ')+q.fb;
+  const nb=document.getElementById('nxtBtn');if(nb)nb.style.display='block';
+};
+window.nextQ=function(){cQ=(cQ+1)%QD.length;renderQ();};
+renderQ();
+
+// REVEAL
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
